@@ -6,7 +6,7 @@ model=load_model('model.h5')
 scaler=pickle.load(open('scaler.pkl','rb'))
 geo_ohe=pickle.load(open('ohe_Geo.pkl','rb'))
 gender_le=pickle.load(open('le_Gender.pkl','rb'))
-st.title("Customer Churn Prediction")
+st.title("Customer Retention Prediction")
 st.write("Please enter the details of the customer")
 
 age=st.slider("Age",18,100)
