@@ -40,7 +40,7 @@ input_data=pd.DataFrame({
     'IsActiveMember':[isActiveMember],
     'Exited':[exited]
 })
-# 
+
 geo_encoded=ohe_geo.transform([[geography]])
 geo_encoded=pd.DataFrame(geo_encoded,columns=ohe_geo.categories_[0])
 input_data=pd.concat([input_data,geo_encoded],axis=1)
@@ -50,4 +50,4 @@ prediction=model.predict(input_data)
 
 st.write(prediction)
 
-st.write(input_data)
+

@@ -86,7 +86,6 @@ def salary_regression():
 
     st.write(prediction)
 
-    st.write(input_data)
 st.sidebar.title("Navigation")
 page=st.sidebar.radio("Choose a model:",["Binary Classification","Salary Prediction"])
 
