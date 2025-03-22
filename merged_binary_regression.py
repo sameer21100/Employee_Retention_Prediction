@@ -5,9 +5,8 @@ from keras import backend as K
 from tensorflow.keras.models import load_model
 
 model=load_model('model.h5')
-def mse(y_true, y_pred):
-    return K.mean(K.square(y_true - y_pred))
-salary_model=load_model("salary_model.h5", custom_objects={'mse': mse})
+
+
 
 
 scaler=pickle.load(open('scaler.pkl','rb'))
@@ -46,7 +45,9 @@ def binary_classification():
         else:
             st.write("Customer will not leave the bank")
 def salary_regression():
-    
+    def mse(y_true, y_pred):
+        return K.mean(K.square(y_true - y_pred))
+    salary_model=load_model("salary_model.h5", custom_objects={'mse': mse})
     st.title("Predict salary: ")
 
     ohe_geo=pickle.load(open("ohe_Geo.pkl","rb"))
@@ -82,7 +83,7 @@ def salary_regression():
     input_data=pd.concat([input_data,geo_encoded],axis=1)
 
     input_data = pd.DataFrame(scale.transform(input_data), columns=input_data.columns)
-    prediction=model.predict(input_data)
+    prediction=salary_model.predict(input_data)
 
     st.write(prediction)
 
