@@ -85,7 +85,7 @@ def salary_regression():
     input_data = pd.DataFrame(scale.transform(input_data), columns=input_data.columns)
     prediction=salary_model.predict(input_data)
 
-    st.write(prediction)
+    st.write("Predicted value",prediction)
 
 st.sidebar.title("Navigation")
 page=st.sidebar.radio("Choose a model:",["Binary Classification","Salary Prediction"])
