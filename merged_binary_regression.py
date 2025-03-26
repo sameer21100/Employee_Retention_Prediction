@@ -76,9 +76,10 @@ def binary_classification():
     if st.session_state.batch_mode:
         batch_file=st.file_uploader("Upload csv file",type=["csv"])
         if batch_file is not None:
+            df = pd.read_csv(batch_file)
             st.success("Batch file uploaded Successfully")
             if batch_file:
-                df = pd.read_csv(batch_file)
+                
                 st.write("Data Preview:", df.head()) 
 
             if batch_file:
@@ -90,9 +91,11 @@ def binary_classification():
                 df = pd.concat([df, geo_df], axis=1)
                 input_data_scaled = scaler.transform(df)
                 predictions = model.predict(input_data_scaled)
+
                 df["Churn Prediction"] = (predictions > 0.5).astype(int)
                 st.write("Predictions:", df.head())
                 churn_distribution(df)
+
                 important_feature=compute_feature_importance(model, df.drop(columns=["Churn Prediction"]), df["Churn Prediction"])
                 plot_feature_importance(important_feature)
             
