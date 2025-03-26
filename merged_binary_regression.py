@@ -6,6 +6,8 @@ import seaborn as sns
 from keras import backend as K
 from tensorflow.keras.models import load_model
 from sklearn.inspection import permutation_importance
+import google.generativeai as genai 
+genai.configure(api_key="AIzaSyDu0OMaq2QkXAAjF7IhuJnu-NtxGljy-Ik")
 
 model=load_model('model.h5',compile=True)
 
@@ -13,6 +15,25 @@ scaler=pickle.load(open('scaler.pkl','rb'))
 geo_ohe=pickle.load(open('ohe_Geo.pkl','rb'))
 gender_le=pickle.load(open('le_Gender.pkl','rb'))
 
+def generate_retention_strategy(customer_data, feature_importance):
+    """Used AI to generate personalized retention strategies."""
+    
+    model = genai.GenerativeModel("gemini-2.0-flash")
+    
+    prompt = f"""
+    Given the following customer data and churn risk factors, provide a personalized retention strategy:
+    
+    Customer Details:
+    {customer_data.to_dict()}
+    
+    Key Churn Risk Factors:
+    {feature_importance.to_dict(orient="records")}
+
+    Suggest actions to improve customer retention.
+    """
+
+    response = model.generate_content(prompt)
+    return response.text
 
 def compute_feature_importance(model, X, y):
     result = permutation_importance(model, X, y, scoring="accuracy", n_repeats=10, random_state=42)
@@ -72,6 +93,8 @@ def binary_classification():
                 df["Churn Prediction"] = (predictions > 0.5).astype(int)
                 st.write("Predictions:", df.head())
                 churn_distribution(df)
+                important_feature=compute_feature_importance(model, df.drop(columns=["Churn Prediction"]), df["Churn Prediction"])
+                plot_feature_importance(important_feature)
             
         
     elif st.session_state.single_mode:
@@ -92,16 +115,19 @@ def binary_classification():
         list=[CreditScore,age,Gender,Tenure,Balance,NumOfProducts,HasCrCard,isActiveMember,EstimatedSalary]
         columns=['CreditScore', 'Gender' ,'Age', 'Tenure', 'Balance', 'NumOfProducts', 'HasCrCard','IsActiveMember', 'EstimatedSalary']
         input_data=pd.DataFrame([list],columns=columns)
+        input_for_ai=input_data
         input_data=pd.concat([input_data,geo_df],axis=1)
         input_data_scaled=scaler.transform(input_data)
         prediction=model.predict(input_data_scaled)
+        prediction_df_ai=pd.DataFrame({"Churn Prediction":prediction.flatten()})
+
+
         if st.button("Predict"):
             if prediction>0.5:
                 st.write("Customer will leave the bank")
             else:
                 st.write("Customer will not leave the bank")
-        important_feature=compute_feature_importance(model, df.drop(columns=["Churn Prediction"]), df["Churn Prediction"])
-        plot_feature_importance(important_feature)
+        st.write(generate_retention_strategy(input_for_ai,prediction_df_ai))
        
 
        
