@@ -6,3 +6,4 @@ numpy
 tensorboard
 streamlit
 seaborn
+google.generativeai
