@@ -11,12 +11,14 @@ genai.configure(api_key="AIzaSyDu0OMaq2QkXAAjF7IhuJnu-NtxGljy-Ik")
 
 model=load_model('model.h5',compile=True)
 
+
+
 scaler=pickle.load(open('scaler.pkl','rb'))
 geo_ohe=pickle.load(open('ohe_Geo.pkl','rb'))
 gender_le=pickle.load(open('le_Gender.pkl','rb'))
 
 def generate_retention_strategy(customer_data, feature_importance):
-    """Used AI to generate personalized retention strategies."""
+    
     
     model = genai.GenerativeModel("gemini-2.0-flash")
     
@@ -62,7 +64,7 @@ def churn_distribution(df):
     st.pyplot(fig)
 
 def binary_classification():
-    st.title("Customer Retention Prediction")
+    st.title("Employee Retention Prediction")
     if "batch_mode" not in st.session_state:
         st.session_state.batch_mode=False
     if "single_mode" not in st.session_state:
